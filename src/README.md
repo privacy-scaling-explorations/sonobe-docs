@@ -1,4 +1,4 @@
-# sonobe docs
+# sonobe
  
 Experimental folding schemes library implemented in a joint effort by [0xPARC](https://0xparc.org/) and [PSE](https://pse.dev).
 
