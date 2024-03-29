@@ -1,0 +1,12 @@
+[book]
+authors = ["0xPARC", "Privacy Scaling Explorations"]
+language = "en"
+multilingual = false
+src = "src"
+title = "sonobe docs"
+
+[output.html]
+mathjax-support = true
+
+[preprocessor.katex]
+renderers = ["html"]
