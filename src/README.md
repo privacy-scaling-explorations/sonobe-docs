@@ -4,12 +4,15 @@ Experimental folding schemes library implemented in a joint effort by [0xPARC](h
 
 <img align="left" style="width:30%;min-width:250px;margin:20px;" src="imgs/sonobe.png">
 
-<br>
-<b>Sonobe</b> is a modular library to fold circuit instances in an Incremental Verifiable computation (IVC) style, which allows to generate a zkSNARK proof of the circuit foldings that can be verified in Ethereum's EVM.
-<br><br>
+<b>Sonobe</b> is a modular library to fold circuit instances in an Incremental Verifiable computation (IVC) style. It features multiple folding schemes and decider setups, allowing users to pick the scheme which best fit their needs. <b>Sonobe</b> also provides a way for developers to generate an EVM-verifiable zkSNARK proof of correct folding.
+
+Sonobe is conceived as an exploratory effort with the aim to push forward the practical side of folding schemes and advancing towards onchain (EVM) verification.
+
 <i>"The <a href="https://en.wikipedia.org/wiki/Sonobe">Sonobe module</a> is one of the many units used to build modular origami. The popularity of Sonobe modular origami models derives from the simplicity of folding the modules, the sturdy and easy assembly, and the flexibility of the system."</i>
 
-<br><br>
+
+> **Warning**: experimental code, do not use in production.<br>
+> The code has not been audited. Several optimizations are also pending. Our focus so far has been on implementing the Nova + CycleFold proving system and achieving onchain (EVM) verification.
 
 
 ## Schemes implemented

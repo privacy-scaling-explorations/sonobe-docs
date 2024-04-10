@@ -1,6 +1,6 @@
 # Solidity verifier
 
-Having used the `DeciderEth` (see [Onchain Decider](#Onchain-Decider) section), we can now verify it in Ethereum's EVM.
+Having used the `Decider` from `decider_eth.rs`, we can now verify it in Ethereum's EVM.
 
 First we need to generate the Solidity contracts that verify the Decider proofs. Use the [solidity-verifiers-cli](cli) tool
 ```

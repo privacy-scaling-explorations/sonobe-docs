@@ -38,19 +38,12 @@ let circuit = DeciderEthCircuit::<
 >::from_nova::<CubicFCircuit<Fr>>(nova.clone());
 let mut rng = rand::rngs::OsRng;
 
-let start = Instant::now();
 let (pk, vk) =
     Groth16::<Bn254>::circuit_specific_setup(circuit.clone(), &mut rng).unwrap();
-println!("Groth16 setup, {:?}", start.elapsed());
 
 // decider proof generation
 let decider_pp = (poseidon_config.clone(), g16_pk, kzg_pk);
 let proof = DECIDER::prove(decider_pp, rng, nova.clone()).unwrap();
-
-// decider proof verification
-let decider_vp = (poseidon_config, g16_vk, kzg_vk);
-let verified = DECIDER::verify(decider_vp, nova.i, nova.z_0, nova.z_i, &nova.U_i, &nova.u_i, proof).unwrap();
-assert!(verified);
 ```
 
 As mentioned above, complete examples can be found at [sonobe/folding-schemes/examples](https://github.com/privacy-scaling-explorations/sonobe/tree/main/folding-schemes/examples)
