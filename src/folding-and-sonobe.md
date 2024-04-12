@@ -2,7 +2,7 @@
 
 ## Folding schemes overview
 
-Folding schemes are a family of SNARKs for iterative computations, allowing to prove that a function $F$ applied $n$ times to an initial input $z_0$ results in $z_n$.
+A folding scheme is a protocol that can help build incrementally verifiable computation (IVC). This is particularly interesting in the case of iterative computations. An IVC allows to prove that a function $F$ applied $n$ times to an initial input $z_0$ results in $z_n$.
 
 <p align="center">
     <img src="imgs/folding-main-idea-diagram.png" style="width:70%;" />
