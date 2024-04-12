@@ -1,4 +1,5 @@
 # sonobe docs
+
 - [Introduction](README.md)
 	- [Folding Schemes and Sonobe](folding-and-sonobe.md)
 
