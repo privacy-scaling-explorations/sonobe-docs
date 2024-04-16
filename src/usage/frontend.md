@@ -1,6 +1,6 @@
 # Frontend
 
-The frontend interface allows to define the circuit to be folded. The currently available frontends are [`circom`](https://github.com/iden3/circom) or [arkworks](https://github.com/arkworks-rs/r1cs-std). We will show here how to define a circuit using `arkworks`.
+The frontend interface allows to define the circuit to be folded. The currently available frontends are [`circom`](https://github.com/iden3/circom) and [arkworks](https://github.com/arkworks-rs/r1cs-std). We will show here how to define a circuit using `arkworks`.
 
 # The `FCircuit` trait
 

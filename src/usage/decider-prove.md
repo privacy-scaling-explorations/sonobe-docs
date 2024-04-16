@@ -45,6 +45,3 @@ let (pk, vk) =
 let decider_pp = (poseidon_config.clone(), g16_pk, kzg_pk);
 let proof = DECIDER::prove(decider_pp, rng, nova.clone()).unwrap();
 ```
-
-As mentioned above, complete examples can be found at [sonobe/folding-schemes/examples](https://github.com/privacy-scaling-explorations/sonobe/tree/main/folding-schemes/examples)
-
