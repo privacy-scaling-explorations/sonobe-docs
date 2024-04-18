@@ -2,7 +2,8 @@
 
 ## Folding schemes overview
 
-A folding scheme is a protocol that can help build incrementally verifiable computation (IVC). This is particularly interesting in the case of iterative computations. An IVC allows to prove that a function $F$ applied $n$ times to an initial input $z_0$ results in $z_n$.
+Folding schemes efficitently achieve incrementally verifiable computation (IVC), where the prover recursively proves the correct execution of the incremental computations.
+Once the IVC iterations are completed, the IVC proof is compressed into the Decider proof, a zkSNARK proof which proves that applying $n$ times the $F$ function (the circuit being folded) to the initial state ($z_0$) results in the final state ($z_n$).
 
 <p align="center">
     <img src="imgs/folding-main-idea-diagram.png" style="width:70%;" />

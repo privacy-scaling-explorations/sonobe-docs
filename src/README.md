@@ -2,6 +2,8 @@
  
 Experimental folding schemes library implemented in a joint effort by [0xPARC](https://0xparc.org/) and [PSE](https://pse.dev).
 
+[**https://github.com/privacy-scaling-explorations/sonobe**](https://github.com/privacy-scaling-explorations/sonobe)
+
 <img align="left" style="width:30%;min-width:250px;margin:20px;" src="imgs/sonobe.png">
 
 <b>Sonobe</b> is a modular library to fold circuit instances in an Incremental Verifiable computation (IVC) style. It features multiple folding schemes and decider setups, allowing users to pick the scheme which best fit their needs.
