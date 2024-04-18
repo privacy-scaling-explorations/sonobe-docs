@@ -8,7 +8,7 @@
 ## Context
 At the final stage of the Nova+CycleFold folding, after $d$ iterations, we have the committed instances $\{u_d, U_d, U_{EC,d} \}$ and their respective witnessess.
 
-![](/imgs/cyclefold-paper-diagram.jpg)
+![](../imgs/cyclefold-paper-diagram.jpg)
 <span style="padding:20px;">*Diagram source: CycleFold paper ([https://eprint.iacr.org/2023/1192.pdf](https://eprint.iacr.org/2023/1192.pdf)). In the case of this document $d=i+2$, so $u_{i+2} = u_d$, $U_{i+2}=U_d$, $U_{EC,i+2}=U_{EC,d}$.*</span>
 
 <br>
@@ -27,7 +27,7 @@ And $U_{EC,d}$ contains: $\{ \overline{E} \in E_2, \overline{W} \in E_2, u \in F
 ## The Decider approach
 The decider proof is computed once, and after all the folding has taken place. Our aim is to be able to verify this proof in the Ethereum's EVM.
 
-![](/imgs/decider-onchain-flow-diagram.png)
+![](../imgs/decider-onchain-flow-diagram.png)
 
 The prover computes $(U_{d+1}, W_{d+1}, \overline{T}) = NIFS.P((U_d, W_d), (u_d, w_d))$
 
@@ -36,7 +36,7 @@ The *Decider Circuit* verifies in its R1CS relation over $F_r$ the following che
 1. correct RelaxedR1CS relation of $U_{d+1}, W_{d+1}$
 2. check that $u_d.\overline{E}=0$ and $u_d.u=1$
 3. check that $u_d.x = H(z_0, z_d, U_d)$
-4. Pedersen commitments verification of $U_{EC,d}.\{ \overline{E}, \overline{W} \}$ with respect $W_{EC,d}$ (the witness of the commited instance)
+4. Pedersen commitments verification of $U_{EC,d}.\{ \overline{E}, \overline{W} \}$ with respect $W_{EC,d}$ (the witness of the committed instance)
 (where $\overline{E},\overline{W} \in E_2$, this check is native in $F_r$)
 <br>*The following check is done non-natively (in $F_r$):*
 5. check the correct RelaxedR1CS relation of $U_{EC,d}, W_{EC,d}$ (this is non-native operations and with naive sparse matrix-vector product blows up the number of constraints. We're trying to reduce the number of constraints [in this other hackmd](https://hackmd.io/x82lTH5oTcKE3uPHniuefw?view))
@@ -91,6 +91,6 @@ The idea is that we check in a R1CS circiut the RelaxedR1CS relation ($Az \circ 
 
 Total: 3 * (x + 80) + 1000 + 2634 + 4_967_155 + 5_146_236 + 7708
 
-eg: for a circuit of `500k` constraints the decider circuit would take aproximately `11.6M` constraints.
+eg: for a circuit of `500k` constraints the decider circuit would take approximately `11.6M` constraints.
 
 As can be seen, most of the costs come from the Pedersen commitments verification and the $U_{EC,d}$ relation
