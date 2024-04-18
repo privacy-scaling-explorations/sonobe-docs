@@ -12,3 +12,4 @@
 	- [Modularity](usage/modularity.md)
 - [Design](design/design.md)
 	- [Nova+CycleFold circuit](design/novacyclefold-circuit.md)
+	- [Decider Onchain](design/nova-decider-onchain.md)
