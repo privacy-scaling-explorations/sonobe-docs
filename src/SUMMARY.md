@@ -5,6 +5,8 @@
 
 - [Usage](usage/overview.md)
 	- [Frontend](usage/frontend.md)
+		- [Arkworks](usage/frontend-arkworks.md)
+		- [Circom](usage/frontend-circom.md)
 	- [Fold](usage/fold.md)
 	- [Decider prove](usage/decider-prove.md)
 	- [Decider verify](usage/decider-verify.md)
