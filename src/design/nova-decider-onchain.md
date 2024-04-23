@@ -39,7 +39,7 @@ The *Decider Circuit* verifies in its R1CS relation over $F_r$ the following che
 4. Pedersen commitments verification of $U_{EC,n}.\{ \overline{E}, \overline{W} \}$ with respect $W_{EC,n}$ (the witness of the committed instance)
 (where $\overline{E},\overline{W} \in E_2$, this check is native in $F_r$)
 <br>*The following check is done non-natively (in $F_r$):*
-5. check the correct RelaxedR1CS relation of $U_{EC,n}, W_{EC,n}$ of the CycleFoldCircuit (this is non-native operations and with naive sparse matrix-vector product blows up the number of constraints. We're trying to reduce the number of constraints [in this other hackmd](https://hackmd.io/x82lTH5oTcKE3uPHniuefw?view))
+5. check the correct RelaxedR1CS relation of $U_{EC,n}, W_{EC,n}$ of the CycleFoldCircuit (this is non-native operations and with naive sparse matrix-vector product blows up the number of constraints
 6. Check correct computation of the KZG challenges
 $$c_E = H(\overline{E}.\{x,y\}),~~c_W = H(\overline{W}.\{x,y\})$$
 which we do through in-circuit Transcript.
@@ -84,7 +84,7 @@ The idea is that we check in a R1CS circiut the RelaxedR1CS relation ($Az \circ 
 2. $u_n$ check: `<1000`
 3. $u_n.x$ hash check: `2634`
 4. Pedersen check of $U_{EC,n}$ commitments (native): `<5M` both commitments (including the inputs allocations). This is a couple of native MSMs of <1500 elements each one)
-5. $U_{EC,n}$ relation (non-native): `5.1M` ([more details on step6 cost](https://hackmd.io/x82lTH5oTcKE3uPHniuefw?view))
+5. $U_{EC,n}$ relation (non-native): `5.1M`
 6. Check correct computation of the KZG challenges: `7708`
 7. check that the KZG evaluations are correct
 8. check that the given NIFS challenge $r$ is indeed well computed
