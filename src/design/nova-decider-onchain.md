@@ -6,10 +6,10 @@
 
 
 ## Context
-At the final stage of the Nova+CycleFold folding, after $d$ iterations, we have the committed instances $\{u_d, U_d, U_{EC,d} \}$ and their respective witnessess.
+At the final stage of the Nova+CycleFold folding, after $n$ iterations, we have the committed instances $\{u_n, U_n, U_{EC,n} \}$ and their respective witnessess.
 
 ![](../imgs/cyclefold-paper-diagram.jpg)
-<span style="padding:20px;">*Diagram source: CycleFold paper ([https://eprint.iacr.org/2023/1192.pdf](https://eprint.iacr.org/2023/1192.pdf)). In the case of this document $d=i+2$, so $u_{i+2} = u_d$, $U_{i+2}=U_d$, $U_{EC,i+2}=U_{EC,d}$.*</span>
+<span style="padding:20px;">*Diagram source: CycleFold paper ([https://eprint.iacr.org/2023/1192.pdf](https://eprint.iacr.org/2023/1192.pdf)). In the case of this document $n=i+2$, so $u_{i+2} = u_n$, $U_{i+2}=U_n$, $U_{EC,i+2}=U_{EC,n}$.*</span>
 
 <br>
 
@@ -19,9 +19,9 @@ The main circuit constraint field is $F_r$, and $C_{EC}$ circuit constraint fiel
 
 Since the objective is to verify the proofs on Ethereum, we set $E_1$=BN254 and $E_2$=Grumpkin. Thus, $F_r$ is the scalar field of the BN254.
 
-The $u_d$ and $U_d$ contain: $\{ \overline{E} \in E_1, \overline{W} \in E_1, u \in F_r, x \in F_r^{|io|} \}$
+The $u_n$ and $U_n$ contain: $\{ \overline{E} \in E_1, \overline{W} \in E_1, u \in F_r, x \in F_r^{|io|} \}$
 
-And $U_{EC,d}$ contains: $\{ \overline{E} \in E_2, \overline{W} \in E_2, u \in F_q, x \in F_q^{|io|} \}$
+And $U_{EC,n}$ contains: $\{ \overline{E} \in E_2, \overline{W} \in E_2, u \in F_q, x \in F_q^{|io|} \}$
 
 
 ## The Decider approach
@@ -29,17 +29,17 @@ The decider proof is computed once, and after all the folding has taken place. O
 
 ![](../imgs/decider-onchain-flow-diagram.png)
 
-The prover computes $(U_{d+1}, W_{d+1}, \overline{T}) = NIFS.P((U_d, W_d), (u_d, w_d))$
+The prover computes $(U_{n+1}, W_{n+1}, \overline{T}) = NIFS.P((U_n, W_n), (u_n, w_n))$
 
 The *Decider Circuit* verifies in its R1CS relation over $F_r$ the following checks:
 
-1. correct RelaxedR1CS relation of $U_{d+1}, W_{d+1}$
-2. check that $u_d.\overline{E}=0$ and $u_d.u=1$
-3. check that $u_d.x = H(z_0, z_d, U_d)$
-4. Pedersen commitments verification of $U_{EC,d}.\{ \overline{E}, \overline{W} \}$ with respect $W_{EC,d}$ (the witness of the committed instance)
+1. correct RelaxedR1CS relation of $U_{n+1}, W_{n+1}$ of the AugmentedFCircuit
+2. check that $u_n.\overline{E}=0$ and $u_n.u=1$
+3. check that $u_n.x_0 = H(n, z_0, z_n, U_n)$ and $u_n.x_1 = H(U_{EC,n})$
+4. Pedersen commitments verification of $U_{EC,n}.\{ \overline{E}, \overline{W} \}$ with respect $W_{EC,n}$ (the witness of the committed instance)
 (where $\overline{E},\overline{W} \in E_2$, this check is native in $F_r$)
 <br>*The following check is done non-natively (in $F_r$):*
-5. check the correct RelaxedR1CS relation of $U_{EC,d}, W_{EC,d}$ (this is non-native operations and with naive sparse matrix-vector product blows up the number of constraints. We're trying to reduce the number of constraints [in this other hackmd](https://hackmd.io/x82lTH5oTcKE3uPHniuefw?view))
+5. check the correct RelaxedR1CS relation of $U_{EC,n}, W_{EC,n}$ of the CycleFoldCircuit (this is non-native operations and with naive sparse matrix-vector product blows up the number of constraints. We're trying to reduce the number of constraints [in this other hackmd](https://hackmd.io/x82lTH5oTcKE3uPHniuefw?view))
 6. Check correct computation of the KZG challenges
 $$c_E = H(\overline{E}.\{x,y\}),~~c_W = H(\overline{W}.\{x,y\})$$
 which we do through in-circuit Transcript.
@@ -51,8 +51,8 @@ where $p_W, p_E \in \mathbb{F}[X]$ are the interpolated polynomials from $W_{i+1
 
 Additionally we would have to check (outside of the circuit):
 
--9. Commitments verification of $U_{d+1}.\{ \overline{E}, \overline{W} \}$ with respect $W_{d+1}$ (where $\overline{E}, \overline{W} \in E_1$)
--10. check $NIFS.V(r, U_d, u_d, \overline{T}) \stackrel{?}{=} U_{d+1}$
+9. Commitments verification of $U_{n+1}.\{ \overline{E}, \overline{W} \}$ with respect $W_{n+1}$ (where $\overline{E}, \overline{W} \in E_1$)
+10. check $NIFS.V(r, U_n, u_n, \overline{T}) \stackrel{?}{=} U_{n+1}$
 
 The check 7 would be too expensive if using Pedersen commitments verification in-circuit (non-natively), so we changed these commitments from Pedersen to KZG, and then verify the KZG commitments outside of the circuit and directly onchain.
 
@@ -80,11 +80,11 @@ The idea is that we check in a R1CS circiut the RelaxedR1CS relation ($Az \circ 
 
 *(`x` is the number of constraints of the circuit that we're folding, and the AugmentedFCircuit takes ~80k constraints)*
 
-1. $U_{d+1}$ relation: `3(x+80k)`
-2. $u_d$ check: `<1000`
-3. $u_d.x$ hash check: `2634`
-4. Pedersen check of $U_{EC,d}$ commitments (native): `<5M` both commitments (including the inputs allocations). This is a couple of native MSMs of <1500 elements each one)
-5. $U_{EC,d}$ relation (non-native): `5.1M` ([more details on step6 cost](https://hackmd.io/x82lTH5oTcKE3uPHniuefw?view))
+1. $U_{n+1}$ relation: `3(x+80k)`
+2. $u_n$ check: `<1000`
+3. $u_n.x$ hash check: `2634`
+4. Pedersen check of $U_{EC,n}$ commitments (native): `<5M` both commitments (including the inputs allocations). This is a couple of native MSMs of <1500 elements each one)
+5. $U_{EC,n}$ relation (non-native): `5.1M` ([more details on step6 cost](https://hackmd.io/x82lTH5oTcKE3uPHniuefw?view))
 6. Check correct computation of the KZG challenges: `7708`
 7. check that the KZG evaluations are correct
 8. check that the given NIFS challenge $r$ is indeed well computed
@@ -93,4 +93,4 @@ Total: 3 * (x + 80) + 1000 + 2634 + 4_967_155 + 5_146_236 + 7708
 
 eg: for a circuit of `500k` constraints the decider circuit would take approximately `11.6M` constraints.
 
-As can be seen, most of the costs come from the Pedersen commitments verification and the $U_{EC,d}$ relation
+As can be seen, most of the costs come from the Pedersen commitments verification and the $U_{EC,n}$ relation
