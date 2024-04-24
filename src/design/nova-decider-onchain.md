@@ -78,9 +78,9 @@ The idea is that we check in a R1CS circiut the RelaxedR1CS relation ($Az \circ 
 
 <u>Estimated costs of the full decider-onchain circuit:</u>
 
-*(`x` is the number of constraints of the circuit that we're folding, and the AugmentedFCircuit takes ~80k constraints)*
+*(`x` is the number of constraints of the circuit that we're folding, and the AugmentedFCircuit takes ~52k constraints)*
 
-1. $U_{n+1}$ relation: `3(x+80k)`
+1. $U_{n+1}$ relation: `3(x+52k)`
 2. $u_n$ check: `<1000`
 3. $u_n.x$ hash check: `2634`
 4. Pedersen check of $U_{EC,n}$ commitments (native): `<5M` both commitments (including the inputs allocations). This is a couple of native MSMs of <1500 elements each one)
@@ -89,8 +89,8 @@ The idea is that we check in a R1CS circiut the RelaxedR1CS relation ($Az \circ 
 7. check that the KZG evaluations are correct
 8. check that the given NIFS challenge $r$ is indeed well computed
 
-Total: 3 * (x + 80) + 1000 + 2634 + 4_967_155 + 5_146_236 + 7708
+Total: 3 * (x + 52_252) + 1000 + 2634 + 4_967_155 + 5_146_236 + 7708
 
-eg: for a circuit of `500k` constraints the decider circuit would take approximately `11.6M` constraints.
+eg: for a circuit of `500k` constraints the decider circuit would take approximately `11.7M` constraints.
 
 As can be seen, most of the costs come from the Pedersen commitments verification and the $U_{EC,n}$ relation
