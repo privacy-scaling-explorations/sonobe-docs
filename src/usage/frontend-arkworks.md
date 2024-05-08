@@ -22,7 +22,10 @@ impl<F: PrimeField> FCircuit<F> for CubicFCircuit<F> {
     fn state_len(&self) -> usize {
         1
     }
-    fn step_native(&self, _i: usize, z_i: Vec<F>) -> Result<Vec<F>, Error> {
+    fn external_inputs_len(&self) -> usize {
+        0
+    }
+    fn step_native(&self, _i: usize, z_i: Vec<F>, _external_inputs: Vec<F>) -> Result<Vec<F>, Error> {
         Ok(vec![z_i[0] * z_i[0] * z_i[0] + z_i[0] + F::from(5_u32)])
     }
     fn generate_step_constraints(
@@ -30,6 +33,7 @@ impl<F: PrimeField> FCircuit<F> for CubicFCircuit<F> {
         cs: ConstraintSystemRef<F>,
         _i: usize,
         z_i: Vec<FpVar<F>>,
+        _external_inputs: Vec<FpVar<F>>,
     ) -> Result<Vec<FpVar<F>>, SynthesisError> {
         let five = FpVar::<F>::new_constant(cs.clone(), F::from(5u32))?;
         let z_i = z_i[0].clone();
@@ -70,10 +74,13 @@ impl<F: PrimeField> FCircuit<F> for MultiInputsFCircuit<F> {
     fn state_len(&self) -> usize {
         5 // This circuit has 5 inputs
     }
+    fn external_inputs_len(&self) -> usize {
+        0
+    }
 
     // Computes the next state values in place, assigning z_{i+1} into z_i, and computing the new z_{i+1}
     // We want the `step_native` method to implement the same logic as the `generate_step_constraints` method
-    fn step_native(&self, _i: usize, z_i: Vec<F>) -> Result<Vec<F>, Error> {
+    fn step_native(&self, _i: usize, z_i: Vec<F>, _external_inputs: Vec<F>) -> Result<Vec<F>, Error> {
         let a = z_i[0] + F::from(4_u32);
         let b = z_i[1] + F::from(40_u32);
         let c = z_i[2] * F::from(4_u32);
@@ -89,6 +96,7 @@ impl<F: PrimeField> FCircuit<F> for MultiInputsFCircuit<F> {
         cs: ConstraintSystemRef<F>,
         _i: usize,
         z_i: Vec<FpVar<F>>,
+        _external_inputs: Vec<FpVar<F>>,
     ) -> Result<Vec<FpVar<F>>, SynthesisError> {
         // Implementing the circuit constraints
         let four = FpVar::<F>::new_constant(cs.clone(), F::from(4u32))?;
@@ -129,10 +137,13 @@ impl<F: PrimeField> FCircuit<F> for Sha256FCircuit<F> {
     fn state_len(&self) -> usize {
         1
     }
+    fn external_inputs_len(&self) -> usize {
+        0
+    }
 
     /// Computes the next state values in place, assigning z_{i+1} into z_i, and computing the new
     /// z_{i+1}
-    fn step_native(&self, _i: usize, z_i: Vec<F>) -> Result<Vec<F>, Error> {
+    fn step_native(&self, _i: usize, z_i: Vec<F>, _external_inputs: Vec<F>) -> Result<Vec<F>, Error> {
         let out_bytes = Sha256::evaluate(&(), z_i[0].into_bigint().to_bytes_le()).unwrap();
         let out: Vec<F> = out_bytes.to_field_elements().unwrap();
 
@@ -145,6 +156,7 @@ impl<F: PrimeField> FCircuit<F> for Sha256FCircuit<F> {
         _cs: ConstraintSystemRef<F>,
         _i: usize,
         z_i: Vec<FpVar<F>>,
+        _external_inputs: Vec<FpVar<F>>,
     ) -> Result<Vec<FpVar<F>>, SynthesisError> {
         let unit_var = UnitVar::default();
         let out_bytes = Sha256Gadget::evaluate(&unit_var, &z_i[0].to_bytes()?)?;
@@ -172,22 +184,20 @@ This is useful for example if we want to fold multiple verifications of signatur
 
 
 where each F is:
-   w_i                                        
-    │     ┌────────────────────┐              
-    │     │FCircuit            │              
-    │     │                    │              
-    └────►│ h =Hash(z_i[0],w_i)│              
-          │ │ =Hash(v, w_i)    │              
- ────────►│ │                  ├───────►      
-z_i=[v,0] │ └──►z_{i+1}=[h, 0] │ z_{i+1}=[h,0]
-          │                    │              
-          └────────────────────┘
+  w_i                                        
+   │     ┌────────────────────┐              
+   │     │FCircuit            │              
+   │     │                    │              
+   └────►│ h =Hash(z_i[0],w_i)│              
+────────►│ │                  ├───────►      
+ z_i     │ └──►z_{i+1}=[h]    │  z_{i+1}
+         │                    │              
+         └────────────────────┘
 ```
 
 where each $w_i$ value is set at the `external_inputs` array.
 
 The last state $z_i$ is used together with the external input w_i as inputs to compute the new state $z_{i+1}$.
-The function F will output the new state in an array of two elements, where the second element is a 0. In other words, $z_{i+1} = [F([z_i, w_i]), 0]$, and the 0 will be replaced by $w_{i+1}$ in the next iteration, so $z_{i+2} = [F([z_{i+1}, w_{i+1}]), 0]$.
 
 ```rust
 #[derive(Clone, Debug)]
@@ -197,47 +207,48 @@ where
 {
     _f: PhantomData<F>,
     poseidon_config: PoseidonConfig<F>,
-    external_inputs: Vec<F>,
 }
 impl<F: PrimeField> FCircuit<F> for ExternalInputsCircuits<F>
 where
     F: Absorb,
 {
-    type Params = (PoseidonConfig<F>, Vec<F>); // where Vec<F> contains the external inputs
+    type Params = (PoseidonConfig<F>);
 
     fn new(params: Self::Params) -> Self {
         Self {
             _f: PhantomData,
             poseidon_config: params.0,
-            external_inputs: params.1,
         }
     }
     fn state_len(&self) -> usize {
-        2
+        1
+    }
+    fn external_inputs_len(&self) -> usize {
+        1
     }
 
-    /// computes the next state values in place, assigning z_{i+1} into z_i, and computing the new
+    /// computes the next state value for the step of F for the given z_i and external_inputs
     /// z_{i+1}
-    fn step_native(&self, i: usize, z_i: Vec<F>) -> Result<Vec<F>, Error> {
-        let input: [F; 2] = [z_i[0], self.external_inputs[i]];
-        let h = CRH::<F>::evaluate(&self.poseidon_config, input).unwrap();
-        Ok(vec![h, F::zero()])
+    fn step_native(&self, i: usize, z_i: Vec<F>, external_inputs: Vec<F>) -> Result<Vec<F>, Error> {
+        let hash_input: [F; 2] = [z_i[0], external_inputs[0]];
+        let h = CRH::<F>::evaluate(&self.poseidon_config, hash_input).unwrap();
+        Ok(vec![h])
     }
 
-    /// generates the constraints for the step of F for the given z_i
+    /// generates the constraints and returns the next state value for the step of F for the given
+    /// z_i and external_inputs
     fn generate_step_constraints(
         &self,
         cs: ConstraintSystemRef<F>,
         i: usize,
         z_i: Vec<FpVar<F>>,
+        external_inputs: Vec<FpVar<F>>,
     ) -> Result<Vec<FpVar<F>>, SynthesisError> {
         let crh_params =
             CRHParametersVar::<F>::new_constant(cs.clone(), self.poseidon_config.clone())?;
-        let external_inputVar =
-            FpVar::<F>::new_witness(cs.clone(), || Ok(self.external_inputs[i])).unwrap();
-        let input: [FpVar<F>; 2] = [z_i[0].clone(), external_inputVar.clone()];
-        let h = CRHGadget::<F>::evaluate(&crh_params, &input)?;
-        Ok(vec![h, FpVar::<F>::zero()])
+        let hash_input: [FpVar<F>; 2] = [z_i[0].clone(), external_inputs[0].clone()];
+        let h = CRHGadget::<F>::evaluate(&crh_params, &hash_input)?;
+        Ok(vec![h])
     }
 }
 ```

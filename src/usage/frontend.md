@@ -20,6 +20,10 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
     /// Returns the number of elements in the state of the FCircuit, which corresponds to the
     /// FCircuit inputs.
     fn state_len(&self) -> usize;
+    
+    /// returns the number of elements in the external inputs used by the FCircuit. External inputs
+    /// are optional, and in case no external inputs are used, this method should return 0.
+    fn external_inputs_len(&self) -> usize;
 
     /// Computes the next state values in place, assigning z_{i+1} into z_i, and computing the new
     /// z_{i+1}
@@ -29,6 +33,7 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
         &self,
         i: usize,
         z_i: Vec<F>,
+        external_inputs: Vec<F>, // inputs that are not part of the state
     ) -> Result<Vec<F>, Error>;
 
     /// Generates the constraints for the step of F for the given z_i
@@ -39,6 +44,7 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
         cs: ConstraintSystemRef<F>,
         i: usize,
         z_i: Vec<FpVar<F>>,
+        external_inputs: Vec<FpVar<F>>, // inputs that are not part of the state
     ) -> Result<Vec<FpVar<F>>, SynthesisError>;
 }
 ```

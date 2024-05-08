@@ -30,7 +30,8 @@ let mut folding_scheme = NOVA::init(&prover_params, F_circuit, initial_state.clo
 // compute a step of the IVC
 for i in 0..num_steps {
     let start = Instant::now();
-    folding_scheme.prove_step().unwrap();
+    // here we pass an empty vec since it does not use external_inputs
+    folding_scheme.prove_step(vec![]).unwrap();
     println!("Nova::prove_step {}: {:?}", i, start.elapsed());
 }
 
