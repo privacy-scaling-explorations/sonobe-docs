@@ -32,4 +32,4 @@ Work in progress:
 Available frontends to define the folded circuit:
 
 - [arkworks](https://github.com/arkworks-rs), arkworks contributors
-- [Circom](https://github.com/iden3/circom), iden3, 0Kims Association
+- [Circom](https://github.com/iden3/circom), iden3, 0Kims Association. Experimental frontend using [arkworks/circom-compat](https://github.com/arkworks-rs/circom-compat).
