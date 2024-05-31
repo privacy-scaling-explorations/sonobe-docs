@@ -1,6 +1,8 @@
 # Circom frontend
- > Experimental frontend using [arkworks/circom-compat](https://github.com/arkworks-rs/circom-compat).
+ > **Note**: Circom frontend will be significantly slower than the Arkworks frontend.
  
+Experimental frontend using [arkworks/circom-compat](https://github.com/arkworks-rs/circom-compat).
+
 We can define the circuit to be folded in Circom. The only interface that we need to fit in is:
 
 ```c
