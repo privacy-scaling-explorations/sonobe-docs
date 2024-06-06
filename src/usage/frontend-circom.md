@@ -1,30 +1,30 @@
 # Circom frontend
- > **Note**: Circom frontend will be significantly slower than the Arkworks frontend.
+ > **Note**: Circom frontend will be significantly slower than the Arkworks frontend. We explain below how to implement a custom `step_native` function with your circom circuits to speed things up!
  
 Experimental frontend using [arkworks/circom-compat](https://github.com/arkworks-rs/circom-compat).
 
 We can define the circuit to be folded in Circom. The only interface that we need to fit in is:
 
 ```c
-template FCircuit() {
-    signal input ivc_input[1]; // IVC state
-    signal input external_inputs[2]; // not state
+template FCircuit(ivc_state_len, aux_inputs_len) {
+    signal input ivc_input[ivc_state_len]; // IVC state
+    signal input external_inputs[aux_inputs_len]; // not state, 
 
-    signal output ivc_output[1]; // next IVC state
+    signal output ivc_output[ivc_state_len]; // next IVC state
     
     // [...]
 }
 component main {public [ivc_input]} = Example();
 ```
 
-The `ivc_input` is the array that defines the initial state, and the `ivc_output` is the array that defines the output state after the step.
+The `ivc_input` is the array that defines the initial state, and the `ivc_output` is the array that defines the output state after the step. Both need to be of the same size. The `external_inputs` array expects auxiliary input values.
 
 So for example, the following circuit does the traditional example at each step, which proves knowledge of $x$ such that $y==x^3 + x + e_0 + e_1$ for a known $y$ ($e_i$ are the `external_inputs[i]`):
 
 ```c
 pragma circom 2.0.3;
 
-template Example () {
+template CubicCircuit() {
     signal input ivc_input[1]; // IVC state
     signal input external_inputs[2]; // not state
 
