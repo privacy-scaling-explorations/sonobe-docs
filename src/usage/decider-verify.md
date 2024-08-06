@@ -15,7 +15,6 @@ type DECIDER = Decider<
     NOVA,
 >;
 
-let decider_vp = (g16_vk, kzg_vk);
 let verified = DECIDER::verify(
     decider_vp, nova.i, nova.z_0, nova.z_i, &nova.U_i, &nova.u_i, proof,
 )

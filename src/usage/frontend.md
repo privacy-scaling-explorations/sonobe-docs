@@ -1,6 +1,12 @@
 # Frontend
 
-The frontend interface allows to define the circuit to be folded. The currently available frontends are [circom](https://github.com/iden3/circom) and [arkworks](https://github.com/arkworks-rs/r1cs-std). We will show here how to define a circuit using `arkworks`.
+The frontend interface allows to define the circuit to be folded. The currently available frontends are:
+- [arkworks](https://github.com/arkworks-rs/r1cs-std)
+- [Circom](https://github.com/iden3/circom)
+- [Noir](https://noir-lang.org/)
+- [Noname](https://github.com/zksecurity/noname)
+
+Defining a circuit to be folded is as simple as fulfilling the `FCircuit` trait interface. Henceforth, integrating a new zk circuits language into Sonobe, can be done by building a wrapper on top of it that satisfies the `FCircuit` trait.
 
 # The `FCircuit` trait
 
@@ -14,18 +20,18 @@ To be folded with sonobe, a circuit needs to implement the [`FCircuit` trait](ht
 pub trait FCircuit<F: PrimeField>: Clone + Debug {
     type Params: Debug;
 
-    /// Returns a new FCircuit instance
-    fn new(params: Self::Params) -> Self;
+    /// returns a new FCircuit instance
+    fn new(params: Self::Params) -> Result<Self, Error>;
 
-    /// Returns the number of elements in the state of the FCircuit, which corresponds to the
+    /// returns the number of elements in the state of the FCircuit, which corresponds to the
     /// FCircuit inputs.
     fn state_len(&self) -> usize;
-    
+
     /// returns the number of elements in the external inputs used by the FCircuit. External inputs
     /// are optional, and in case no external inputs are used, this method should return 0.
     fn external_inputs_len(&self) -> usize;
 
-    /// Computes the next state values in place, assigning z_{i+1} into z_i, and computing the new
+    /// computes the next state values in place, assigning z_{i+1} into z_i, and computing the new
     /// z_{i+1}
     fn step_native(
         // this method uses self, so that each FCircuit implementation (and different frontends)
@@ -36,7 +42,7 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
         external_inputs: Vec<F>, // inputs that are not part of the state
     ) -> Result<Vec<F>, Error>;
 
-    /// Generates the constraints for the step of F for the given z_i
+    /// generates the constraints for the step of F for the given z_i
     fn generate_step_constraints(
         // this method uses self, so that each FCircuit implementation (and different frontends)
         // can hold a state if needed to store data to generate the constraints.

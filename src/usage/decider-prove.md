@@ -27,21 +27,14 @@ type DECIDER = Decider<
     NOVA,           // here we define the FoldingScheme to use
 >;
 
-// generate Groth16 setup
-let circuit = DeciderEthCircuit::<
-    Projective,
-    GVar,
-    Projective2,
-    GVar2,
-    Pedersen<Projective>,
-    Pedersen<Projective2>,
->::from_nova::<CubicFCircuit<Fr>>(nova.clone());
 let mut rng = rand::rngs::OsRng;
 
-let (pk, vk) =
-    Groth16::<Bn254>::circuit_specific_setup(circuit.clone(), &mut rng).unwrap();
+// prepare the Decider prover & verifier params for the given nova_params and nova instance. This involves generating the Groth16 and KZG10 setup
+let (decider_pp, decider_vp) = DECIDER::preprocess(&mut rng, &nova_params, nova.clone()).unwrap();
 
 // decider proof generation
-let decider_pp = (poseidon_config.clone(), g16_pk, kzg_pk);
-let proof = DECIDER::prove(decider_pp, rng, nova.clone()).unwrap();
+let proof = DECIDER::prove(rng, decider_pp, nova.clone()).unwrap();
+
 ```
+
+As in the previous sections, you can find a full examples with all the code at [sonobe/examples](https://github.com/privacy-scaling-explorations/sonobe/tree/main/examples).

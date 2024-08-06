@@ -30,7 +30,7 @@ let calldata: Vec<u8> = prepare_calldata(
 .unwrap();
 
 // prepare the setup params for the solidity verifier
-let nova_cyclefold_vk = NovaCycleFoldVerifierKey::from((g16_vk, kzg_vk, f_circuit.state_len()));
+let nova_cyclefold_vk = NovaCycleFoldVerifierKey::from((decider_vp, f_circuit.state_len()));
 
 // generate the solidity code
 let decider_solidity_code = get_decider_template_for_cyclefold_decider(nova_cyclefold_vk);
@@ -43,6 +43,7 @@ let (_, output) = evm.call(verifier_address, calldata.clone());
 assert_eq!(*output.last().unwrap(), 1);
 
 // save smart contract and the calldata
+println!("storing nova-verifier.sol and the calldata into files");
 use std::fs;
 fs::write( "./examples/nova-verifier.sol", decider_solidity_code.clone()).unwrap();
 fs::write("./examples/solidity-calldata.calldata", calldata.clone()).unwrap();
