@@ -55,3 +55,13 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
 }
 ```
 
+# Side note: adhoc frontend dependencies
+
+There are many ad hoc dependencies for each of the frontends integrated with Sonobe. Here are a few reasons why this is the case.
+
+First, any frontend different from Arkworks needs a "bridge"—a way to "translate" constraints from one R1CS framework to another. Indeed, Sonobe uses Arkworks as its constraint writing framework under the hood. Therefore, any R1CS written with another framework (e.g., Circom) will need to port its constraint system to Arkworks.
+
+Second, R1CS bridge libraries are often developed by teams assuming that public and private witness values will be assigned simultaneously. This is typically the standard approach. However, folding schemes differ, as they redirect the public outputs of one computation to the public inputs of the next step. This means that public inputs are already assigned when calling the "bridge" to port whatever frontend constraints to Sonobe.
+
+Consequently, we had to make a few ad hoc changes to each of these bridges to make them compatible with Sonobe. We are aware that this significantly increases dependencies, which also raises maintenance requirements. The topic of how to reduce our reliance on such ad hoc changes in the future is being actively [discussed](https://github.com/privacy-scaling-explorations/sonobe/issues/146).  
+
