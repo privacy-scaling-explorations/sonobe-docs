@@ -8,11 +8,11 @@ However, having to modify and use a special-purpose zk-SNARK for hiding and comp
 
 Nova's zk-IVC proof generation is quite efficient, as it simply involves blinding private field elements with randomly sampled values. It can be applied to a variety of use cases.
 
-Firstly, Nova's zero-knowledge layer allows users to compute folds and send a zk-IVC proof to any IVC verifier while blinding witness values. This is useful in itself; however, the proof will not be succinct. 
+Firstly, Nova's zero-knowledge layer allows users to compute folds and send a zk-IVC proof to any IVC verifier while blinding witness values. This is useful in itself; however, the proof will not be succinct. This is the sole usecase that can be supported by sonobe *today*. 
 
-Nova's zero-knowledge layer can also be used to delegate the compression of an IVC proof to a more powerful but untrusted server. With this approach, a user can blind witness values attesting to the correctness of their computation and send a zk-IVC proof, which a server will "compress" using the SNARK of its choice.
+We can still envision additional applications for Nova's zero-knowledge layer. It could also be used to delegate the compression of an IVC proof to a more powerful but untrusted server. With this approach, a user could blind witness values attesting to the correctness of their computation and send a zk-IVC proof, which a server will "compress" using the SNARK of its choice.
 
-Finally, users can leverage Nova's zero-knowledge layer to delegate both folding and compression to an untrusted server. This is an interesting use case, as it could enable an efficient, tree-like folding version of Nova. See [this issue](https://github.com/privacy-scaling-explorations/sonobe/issues/136) on the Sonobe repository.
+Finally, users could leverage Nova's zero-knowledge layer to delegate both folding and compression to an untrusted server. This is an interesting use case, as it could enable an efficient, tree-like folding version of Nova. See [this issue](https://github.com/privacy-scaling-explorations/sonobe/issues/136) on the Sonobe repository. Again, this usecase is not supported by sonobe as of now, come talk to us if you are working on it!
 
 # Example
 
