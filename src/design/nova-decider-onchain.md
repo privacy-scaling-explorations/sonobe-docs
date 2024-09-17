@@ -34,7 +34,7 @@ And $U_{EC,n}$ contains: $\{ \overline{E} \in E_2, \overline{W} \in E_2, u \in F
 6. check the correct RelaxedR1CS relation of $U_{EC,n}, W_{EC,n}$ of the CycleFoldCircuit
 7. check commitments of $U_{EC,n}.\{ \overline{E}, \overline{W} \}$ with respect $W_{EC,n}$ (where $\overline{E},\overline{W} \in E_2$)
 
-## The Onchain Decider approach
+## Onchain Decider approach
 The decider proof is computed once, and after all the folding has taken place. Our aim is to be able to verify this proof in the Ethereum's EVM.
 
 ![](../imgs/decider-onchain-flow-diagram.png)

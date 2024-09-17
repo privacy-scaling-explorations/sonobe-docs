@@ -18,4 +18,5 @@
 - [Design](design/design.md)
 	- [Nova+CycleFold circuit](design/novacyclefold-circuit.md)
 	- [Decider Onchain](design/nova-decider-onchain.md)
+	- [Decider Offchain](design/nova-decider-offchain.md)
 - [Examples and Projects](examples_projects.md)
