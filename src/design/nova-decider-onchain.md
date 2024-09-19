@@ -54,6 +54,7 @@ The *Decider Circuit* verifies in its R1CS relation over $F_r$ the following che
     - $eval_W == p_W(c_W)$
     - $eval_E == p_E(c_E)$
     <br>where $p_W, p_E \in \mathbb{F}[X]$ are the interpolated polynomials from $W_{i+1}.W,~ W_{i+1}.E$ respectively.
+    <br> ie. $p_W(x) = interpolate(W_{i+1}.W, 0)$, where $0$ is zero-padding to the next power of 2 length, and $interpolate()$ interpolates a (unique) polynomial from the vector
 - 6: check the correct RelaxedR1CS relation of $U_{EC,n}, W_{EC,n}$ of the CycleFoldCircuit (this is non-native operations and with naive sparse matrix-vector product blows up the number of constraints)
 - 7: Pedersen commitments verification of $U_{EC,n}.\{ \overline{E}, \overline{W} \}$ with respect $W_{EC,n}$ (the witness of the committed instance)
 (where $\overline{E},\overline{W} \in E_2$, this check is native in $F_r$)

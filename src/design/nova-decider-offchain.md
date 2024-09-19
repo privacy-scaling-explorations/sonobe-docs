@@ -45,7 +45,8 @@ In the offchain case, since we can end up with proofs in both curves of the cycl
 - 5.2: check that the KZG evaluations for $U_{n+1}$ are correct
     - $eval_W == p_W(c_W)$
     - $eval_E == p_E(c_E)$
-    <br>where $p_W, p_E \in \mathbb{F}[X]$ are the interpolated polynomials from $W_{i+1}.W,~ W_{i+1}.E$ respectively.
+    <br>where $p_W, p_E \in \mathbb{F}[X]$ are the interpolated polynomials from $W_{i+1}.W,~ W_{i+1}.E$ respectively,
+    <br> ie. $p_W(x) = interpolate(W_{i+1}.W, 0)$, where $0$ is zero-padding to the next power of 2 length, and $interpolate()$ interpolates a (unique) polynomial from the vector
 
 #### Circuit2 $\in Fq$ ($E_2.F_r$)
 
