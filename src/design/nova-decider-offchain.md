@@ -39,10 +39,10 @@ In the offchain case, since we can end up with proofs in both curves of the cycl
 - 2: check that $u_n.\overline{E}=0$ and $u_n.u=1$
 - 3: check that $u_n.x_0 = H(n, z_0, z_n, U_n)$ and $u_n.x_1 = H(U_{EC,n})$
 - 4: correct RelaxedR1CS relation of $U_{n+1}, W_{n+1}$ of the AugmentedFCircuit
-- 5.1: Check correct computation of the KZG challenges for $U_{n+1}$
+- 5.1: Check correct computation of the CommitmentScheme challenges for $U_{n+1}$
     $$c_E = H(U_{n+1}.\overline{E}.\{x,y\}),~~c_W = H(U_{n+1}.\overline{W}.\{x,y\})$$
     which we do through in-circuit Transcript.
-- 5.2: check that the KZG evaluations for $U_{n+1}$ are correct
+- 5.2: check that the CommitmentScheme evaluations for $U_{n+1}$ are correct
     - $eval_W == p_W(c_W)$
     - $eval_E == p_E(c_E)$
     <br>where $p_W, p_E \in \mathbb{F}[X]$ are the interpolated polynomials from $W_{i+1}.W,~ W_{i+1}.E$ respectively,
@@ -51,10 +51,10 @@ In the offchain case, since we can end up with proofs in both curves of the cycl
 #### Circuit2 $\in Fq$ ($E_2.F_r$)
 
 - 6: correct RelaxedR1CS relation of $U_{EC,d}, W_{EC,d}$
-- 7.1: Check correct computation of the KZG challenges for $U_{EC}$
+- 7.1: Check correct computation of the CommitmentScheme challenges for $U_{EC}$
     $$c_E = H(U_{EC}.\overline{E}.\{x,y\}),~~c_W = H(U_{EC}.\overline{W}.\{x,y\})$$
     which we do through in-circuit Transcript.
-- 7.2: check that the KZG evaluations for $U_{EC}$ are correct
+- 7.2: check that the CommitmentScheme evaluations for $U_{EC}$ are correct
     - $eval_W == p_W(c_W)$
     - $eval_E == p_E(c_E)$
     <br>where $p_W, p_E \in \mathbb{F}[X]$ are the interpolated polynomials from $W_{i+1}.W,~ W_{i+1}.E$ respectively.
