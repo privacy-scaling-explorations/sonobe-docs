@@ -6,7 +6,7 @@ Experimental frontend using [arkworks/circom-compat](https://github.com/arkworks
 We can define the circuit to be folded in Circom. The only interface that we need to fit in is:
 
 ```c
-template FCircuit(ivc_state_len, aux_inputs_len) {
+template Example(ivc_state_len, aux_inputs_len) {
     signal input ivc_input[ivc_state_len]; // IVC state
     signal input external_inputs[aux_inputs_len]; // external inputs, not part of the folding state
 
@@ -27,7 +27,7 @@ In the following image, the `ivc_input`=$z_i$, the `external_inputs`=$w_i$, and 
 
 <br>
 
-So for example, the following circuit proves (at each folding step) knowledge of $x$ such that $y==x^3 + x + e_0 + e_1$ for a known $y$ ($e_i$ are the `external_inputs[i]`):
+So for example, the following circuit proves (at each folding step) knowledge of $x$ such that $y==x^3 + e_0x + e_1$ for a known $y$ ($e_i$ are the `external_inputs[i]`):
 
 ```c
 pragma circom 2.0.3;
