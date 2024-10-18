@@ -14,6 +14,7 @@
 	- [Decider verify](usage/decider-verify.md)
 		- [Solidity verifier](usage/solidity-verifier.md)
   - [Nova's zero-knowledge layer](usage/nova-zk.md)
+  - [WASM - browser usage](usage/wasm.md)
   - [Modularity](usage/modularity.md)
 - [Design](design/design.md)
 	- [Nova+CycleFold circuit](design/novacyclefold-circuit.md)

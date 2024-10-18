@@ -1,10 +1,10 @@
 # Frontend
 
-The frontend interface allows to define the circuit to be folded. The currently available frontends are:
-- [arkworks](https://github.com/arkworks-rs/r1cs-std)
-- [Circom](https://github.com/iden3/circom)
-- [Noir](https://noir-lang.org/)
-- [Noname](https://github.com/zksecurity/noname)
+The frontend interface allows to define the circuit to be folded.
+The recommended frontend is to directly use [arkworks](https://github.com/arkworks-rs) to define the FCircuit, just following the [`FCircuit` trait](https://github.com/privacy-scaling-explorations/sonobe/blob/main/folding-schemes/src/frontend/mod.rs).
+
+Alternatively, experimental frontends for [Circom](https://github.com/iden3/circom), [Noir](https://noir-lang.org/), and [Noname](https://github.com/zksecurity/noname) can be found at [sonobe/frontends](https://github.com/privacy-scaling-explorations/sonobe/tree/main/frontends), which have some computational (and time) overhead.
+
 
 Defining a circuit to be folded is as simple as fulfilling the `FCircuit` trait interface. Henceforth, integrating a new zk circuits language into Sonobe, can be done by building a wrapper on top of it that satisfies the `FCircuit` trait.
 
@@ -55,7 +55,8 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
 }
 ```
 
-# Side note: adhoc frontend dependencies
+# Side note: adhoc frontend dependencies for the experimental frontends
+> Note: this affects only to the experimental frontends in the [sonobe/frontends](https://github.com/privacy-scaling-explorations/sonobe/tree/main/frontends) directory.
 
 There are many ad hoc dependencies for each of the frontends integrated with Sonobe. Here are a few reasons why this is the case.
 
@@ -64,4 +65,3 @@ First, any frontend different from Arkworks needs a "bridge"—a way to "transla
 Second, R1CS bridge libraries are often developed by teams assuming that public and private witness values will be assigned simultaneously. This is typically the standard approach. However, folding schemes differ, as they redirect the public outputs of one computation to the public inputs of the next step. This means that public inputs are already assigned when calling the "bridge" to port whatever frontend constraints to Sonobe.
 
 Consequently, we had to make a few ad hoc changes to each of these bridges to make them compatible with Sonobe. We are aware that this significantly increases dependencies, which also raises maintenance requirements. The topic of how to reduce our reliance on such ad hoc changes in the future is being actively [discussed](https://github.com/privacy-scaling-explorations/sonobe/issues/146).  
-
