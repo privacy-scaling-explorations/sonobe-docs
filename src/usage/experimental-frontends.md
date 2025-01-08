@@ -1,4 +1,20 @@
-# Circom frontend
+# Experimental frontends
+> Warning: the following frontends are experimental and some computational and time overhead is expected when using them compared to directly using the [arkworks frontend](frontend-arkworks.md).
+
+
+This section overviews how to use the various experimental frontends:
+- [implementing new frontends](#implementing-new-frontends)
+- [Circom frontend](#circom-frontend)
+- [Noname frontend](#noname-frontend)
+- [Noir frontend](#noir-frontend)
+
+
+## Implementing new frontends
+
+Support for new frontends can be added (even from outside this repo) by implementing the [`FCircuit` trait](https://github.com/privacy-scaling-explorations/sonobe/blob/main/folding-schemes/src/frontend/mod.rs).
+
+
+## Circom frontend
  > **Note**: Circom frontend will be significantly slower than the Arkworks frontend. We explain below how to implement a custom `step_native` function with your circom circuits to speed things up!
  
 Experimental frontend using [arkworks/circom-compat](https://github.com/arkworks-rs/circom-compat).
@@ -107,3 +123,21 @@ for (i, external_inputs_at_step) in external_inputs.iter().enumerate() {
 
 ```
 You can find a full example using Nova to fold a Circom circuit at [sonobe/examples/circom_full_flow.rs](https://github.com/privacy-scaling-explorations/sonobe/blob/main/examples/circom_full_flow.rs).
+
+
+## Noname frontend
+
+Experimental [Noname](https://github.com/zksecurity/noname/). Under the hood, we [bridge](https://github.com/dmpierre/ark-noname/tree/feat/sonobe-integration) compiled Noname circuits to arkworks R1CS. Our Noname integration does not support Noname's standard library for now. 
+
+Using Noname with sonobe is similar to using any other frontend. Sonobe expects that the length of your public and private (external) inputs match what the Noname circuit expects. Note that sonobe does not expect your public inputs to follow some specific naming convention when using Noname: it will assume that whatever public input variable you have is the IVC state. 
+
+This [example](https://github.com/privacy-scaling-explorations/sonobe/blob/main/examples/noname_full_flow.rs) shows how to fold a simple Noname circuit having both public and external, private inputs.
+
+
+## Noir frontend
+
+Experimental [Noir](https://noir-lang.org/) frontend. Under the hood, we [bridge](https://github.com/dmpierre/arkworks_backend) compiled Noir circuits to arkworks R1CS. Beware that sonobe assumes that the compiled Noir circuit that is being folded does not use any other opcode than an arithmetic gate: you can not fold circuits calling [oracles](https://noir-lang.org/docs/noir/concepts/oracles) or using [unconstrained](https://noir-lang.org/docs/noir/concepts/unconstrained/) functions. You should be able to use Noir's standard library though.
+
+Using Noir with sonobe is similar to using any other frontend. Sonobe expects that the length of your public and private (external) inputs match what the Noir circuit expects. Note that sonobe does not expect your public inputs to follow some specific naming convention when using Noir: it will assume that whatever public input variable you have is the IVC state. 
+
+This [example](https://github.com/privacy-scaling-explorations/sonobe/blob/main/examples/noir_full_flow.rs) shows how to fold a poseidon circuit from the Noir standard library. 

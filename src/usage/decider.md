@@ -1,4 +1,6 @@
-# Decider prove
+# Decider
+
+## Decider prove
 
 Two options:
 
@@ -17,14 +19,12 @@ Generating the final proof (decider), to be able to verify it in Ethereum's EVM:
 ```rust
 type DECIDER = Decider<
     Projective,
-    GVar,
     Projective2,
-    GVar2,
     CubicFCircuit<Fr>,
     KZG<'static, Bn254>,
     Pedersen<Projective2>,
     Groth16<Bn254>, // here we define the Snark to use in the decider
-    NOVA,           // here we define the FoldingScheme to use
+    NOVA,              // here we define the FoldingScheme to use
 >;
 
 let mut rng = rand::rngs::OsRng;
@@ -38,3 +38,27 @@ let proof = DECIDER::prove(rng, decider_pp, nova.clone()).unwrap();
 ```
 
 As in the previous sections, you can find a full examples with all the code at [sonobe/examples](https://github.com/privacy-scaling-explorations/sonobe/tree/main/examples).
+
+## Decider verify
+We can now verify the Decider proof
+
+```rust
+// this is the same that we defined for the prover
+type DECIDER = Decider<
+    Projective,
+    Projective2,
+    CubicFCircuit<Fr>,
+    KZG<'static, Bn254>,
+    Pedersen<Projective2>,
+    Groth16<Bn254>,
+    NOVA,
+>;
+
+let verified = DECIDER::verify(
+    decider_vp, nova.i, nova.z_0, nova.z_i, &nova.U_i, &nova.u_i, proof,
+)
+.unwrap();
+assert!(verified);
+```
+
+In the Ethereum Decider case, we can generate a Solidity smart contract that verifies the proofs onchain. More details in the [next section](solidity-verifier.md).

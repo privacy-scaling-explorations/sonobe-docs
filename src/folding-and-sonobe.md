@@ -15,10 +15,11 @@ In other words, it allows to prove efficiently that $z_n = F(...~F(F(F(F(z_0, w_
 
 <br>
 
-The next 3 videos provide a good overview of folding schemes:
+The next 3 videos provide an overview of the main ideas in folding schemes (sorted from more high level to deepest into the concepts):
 - In [this presentation](https://www.youtube.com/watch?v=Jj19k2AXH2k) (5 min) Abhiram Kothapalli explains the main idea of Nova folding scheme.
 - In [this presentation](https://youtu.be/IzLTpKWt-yg?t=6367) (20 min) Carlos Pérez overviews the features of folding schemes and what can be built with them.
-- In [this presentation](https://www.youtube.com/watch?v=SwonTtOQzAk) (1h) Justin Drake explains what a folding scheme is and Nova-related concepts.
+- In [this presentation](https://www.youtube.com/watch?v=z3FH9I8klDk) (30min) arnaucube overivews the main building blocks on folding schemes and showcases the usage of Sonobe.
+- In [this presentation](https://www.youtube.com/watch?v=4alOna5X3ro) (1h) Albert Garreta dives into the math behind folding schemes.
 
 ## Sonobe overview
 

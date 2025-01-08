@@ -3,7 +3,7 @@
 The frontend interface allows to define the circuit to be folded.
 The recommended frontend is to directly use [arkworks](https://github.com/arkworks-rs) to define the FCircuit, just following the [`FCircuit` trait](https://github.com/privacy-scaling-explorations/sonobe/blob/main/folding-schemes/src/frontend/mod.rs).
 
-Alternatively, experimental frontends for [Circom](https://github.com/iden3/circom), [Noir](https://noir-lang.org/), and [Noname](https://github.com/zksecurity/noname) can be found at [sonobe/frontends](https://github.com/privacy-scaling-explorations/sonobe/tree/main/frontends), which have some computational (and time) overhead.
+Alternatively, experimental frontends for [Circom](https://github.com/iden3/circom), [Noir](https://noir-lang.org/), and [Noname](https://github.com/zksecurity/noname) can be found at [sonobe/experimental-frontends](https://github.com/privacy-scaling-explorations/sonobe/tree/main/experimental-frontends), which have some computational (and time) overhead.
 
 
 Defining a circuit to be folded is as simple as fulfilling the `FCircuit` trait interface. Henceforth, integrating a new zk circuits language into Sonobe, can be done by building a wrapper on top of it that satisfies the `FCircuit` trait.
@@ -17,8 +17,14 @@ To be folded with sonobe, a circuit needs to implement the [`FCircuit` trait](ht
 /// inside the agmented F' function).
 /// The parameter z_i denotes the current state, and z_{i+1} denotes the next state after applying
 /// the step.
+/// Note that the external inputs for the specific circuit are defined at the implementation of
+/// both `FCircuit::ExternalInputs` and `FCircuit::ExternalInputsVar`, where the `Default` trait
+/// implementation. For example if the external inputs are just an array of field elements, their
+/// `Default` trait implementation must return an array of the expected size.
 pub trait FCircuit<F: PrimeField>: Clone + Debug {
     type Params: Debug;
+    type ExternalInputs: Clone + Default + Debug;
+    type ExternalInputsVar: Clone + Default + Debug + AllocVar<Self::ExternalInputs, F>;
 
     /// returns a new FCircuit instance
     fn new(params: Self::Params) -> Result<Self, Error>;
@@ -26,21 +32,6 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
     /// returns the number of elements in the state of the FCircuit, which corresponds to the
     /// FCircuit inputs.
     fn state_len(&self) -> usize;
-
-    /// returns the number of elements in the external inputs used by the FCircuit. External inputs
-    /// are optional, and in case no external inputs are used, this method should return 0.
-    fn external_inputs_len(&self) -> usize;
-
-    /// computes the next state values in place, assigning z_{i+1} into z_i, and computing the new
-    /// z_{i+1}
-    fn step_native(
-        // this method uses self, so that each FCircuit implementation (and different frontends)
-        // can hold a state if needed to store data to compute the next state.
-        &self,
-        i: usize,
-        z_i: Vec<F>,
-        external_inputs: Vec<F>, // inputs that are not part of the state
-    ) -> Result<Vec<F>, Error>;
 
     /// generates the constraints for the step of F for the given z_i
     fn generate_step_constraints(
@@ -50,13 +41,13 @@ pub trait FCircuit<F: PrimeField>: Clone + Debug {
         cs: ConstraintSystemRef<F>,
         i: usize,
         z_i: Vec<FpVar<F>>,
-        external_inputs: Vec<FpVar<F>>, // inputs that are not part of the state
+        external_inputs: Self::ExternalInputsVar, // inputs that are not part of the state
     ) -> Result<Vec<FpVar<F>>, SynthesisError>;
 }
 ```
 
-# Side note: adhoc frontend dependencies for the experimental frontends
-> Note: this affects only to the experimental frontends in the [sonobe/frontends](https://github.com/privacy-scaling-explorations/sonobe/tree/main/frontends) directory.
+## Side note: adhoc frontend dependencies for the experimental frontends
+> Note: this affects only to the experimental frontends in the [sonobe/experimental-frontends](https://github.com/privacy-scaling-explorations/sonobe/tree/main/experimental-frontends) directory.
 
 There are many ad hoc dependencies for each of the frontends integrated with Sonobe. Here are a few reasons why this is the case.
 

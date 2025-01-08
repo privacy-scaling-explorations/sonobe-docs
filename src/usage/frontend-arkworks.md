@@ -1,6 +1,6 @@
 # Arkworks frontend
 
-Let's walk through different simple examples implementing the `FCircuit` trait. By the end of this section, you will hopefully be familiar with how to integrate an `arkworks` circuit into sonobe.
+Let's walk through different simple examples implementing the `FCircuit` trait. By the end of this section, you will hopefully be familiar with how to integrate an `arkworks` circuit into Sonobe.
 
 You can find most of the following examples with the rest of code to run them at the [`examples`](https://github.com/privacy-scaling-explorations/sonobe/tree/main/examples) directory of the Sonobe repo.
 
@@ -16,29 +16,21 @@ pub struct CubicFCircuit<F: PrimeField> {
 }
 impl<F: PrimeField> FCircuit<F> for CubicFCircuit<F> {
     type Params = ();
+    type ExternalInputs = ();
+    type ExternalInputsVar = ();
+
     fn new(_params: Self::Params) -> Result<Self, Error> {
         Ok(Self { _f: PhantomData })
     }
     fn state_len(&self) -> usize {
         1
     }
-    fn external_inputs_len(&self) -> usize {
-        0
-    }
-    fn step_native(
-        &self,
-        _i: usize,
-        z_i: Vec<F>,
-        _external_inputs: Vec<F>,
-    ) -> Result<Vec<F>, Error> {
-        Ok(vec![z_i[0] * z_i[0] * z_i[0] + z_i[0] + F::from(5_u32)])
-    }
     fn generate_step_constraints(
         &self,
         cs: ConstraintSystemRef<F>,
         _i: usize,
         z_i: Vec<FpVar<F>>,
-        _external_inputs: Vec<FpVar<F>>,
+        _external_inputs: Self::ExternalInputsVar,
     ) -> Result<Vec<FpVar<F>>, SynthesisError> {
         let five = FpVar::<F>::new_constant(cs.clone(), F::from(5u32))?;
         let z_i = z_i[0].clone();
@@ -68,41 +60,22 @@ pub struct MultiInputsFCircuit<F: PrimeField> {
 }
 impl<F: PrimeField> FCircuit<F> for MultiInputsFCircuit<F> {
     type Params = ();
+    type ExternalInputs = ();
+    type ExternalInputsVar = ();
 
     fn new(_params: Self::Params) -> Result<Self, Error> {
         Ok(Self { _f: PhantomData })
     }
     fn state_len(&self) -> usize {
-        5 // since the circuit has 5 inputs
+        5
     }
-    fn external_inputs_len(&self) -> usize {
-        0
-    }
-
-    /// computes the next state values in place, assigning z_{i+1} into z_i, and computing the new
-    /// z_{i+1}
-    fn step_native(
-        &self,
-        _i: usize,
-        z_i: Vec<F>,
-        _external_inputs: Vec<F>,
-    ) -> Result<Vec<F>, Error> {
-        let a = z_i[0] + F::from(4_u32);
-        let b = z_i[1] + F::from(40_u32);
-        let c = z_i[2] * F::from(4_u32);
-        let d = z_i[3] * F::from(40_u32);
-        let e = z_i[4] + F::from(100_u32);
-
-        Ok(vec![a, b, c, d, e])
-    }
-
     /// generates the constraints for the step of F for the given z_i
     fn generate_step_constraints(
         &self,
         cs: ConstraintSystemRef<F>,
         _i: usize,
         z_i: Vec<FpVar<F>>,
-        _external_inputs: Vec<FpVar<F>>,
+        _external_inputs: Self::ExternalInputsVar,
     ) -> Result<Vec<FpVar<F>>, SynthesisError> {
         let four = FpVar::<F>::new_constant(cs.clone(), F::from(4u32))?;
         let forty = FpVar::<F>::new_constant(cs.clone(), F::from(40u32))?;
@@ -173,6 +146,8 @@ where
     F: Absorb,
 {
     type Params = PoseidonConfig<F>;
+    type ExternalInputs = [F; 1];
+    type ExternalInputsVar = [FpVar<F>; 1];
 
     fn new(params: Self::Params) -> Result<Self, Error> {
         Ok(Self {
@@ -183,23 +158,6 @@ where
     fn state_len(&self) -> usize {
         1
     }
-    fn external_inputs_len(&self) -> usize {
-        1
-    }
-
-    /// computes the next state value for the step of F for the given z_i and external_inputs
-    /// z_{i+1}
-    fn step_native(
-        &self,
-        _i: usize,
-        z_i: Vec<F>,
-        external_inputs: Vec<F>,
-    ) -> Result<Vec<F>, Error> {
-        let hash_input: [F; 2] = [z_i[0], external_inputs[0]];
-        let h = CRH::<F>::evaluate(&self.poseidon_config, hash_input).unwrap();
-        Ok(vec![h])
-    }
-
     /// generates the constraints and returns the next state value for the step of F for the given
     /// z_i and external_inputs
     fn generate_step_constraints(
@@ -207,7 +165,7 @@ where
         cs: ConstraintSystemRef<F>,
         _i: usize,
         z_i: Vec<FpVar<F>>,
-        external_inputs: Vec<FpVar<F>>,
+        external_inputs: Self::ExternalInputsVar,
     ) -> Result<Vec<FpVar<F>>, SynthesisError> {
         let crh_params =
             CRHParametersVar::<F>::new_constant(cs.clone(), self.poseidon_config.clone())?;

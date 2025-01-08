@@ -22,14 +22,16 @@ The library uses [arkworks](https://github.com/arkworks-rs), and implements the 
 
 - [Nova: Recursive Zero-Knowledge Arguments from Folding Schemes](https://eprint.iacr.org/2021/370.pdf), Abhiram Kothapalli, Srinath Setty, Ioanna Tzialla. 2021
 - [CycleFold: Folding-scheme-based recursive arguments over a cycle of elliptic curves](https://eprint.iacr.org/2023/1192.pdf), Abhiram Kothapalli, Srinath Setty. 2023
-
-Work in progress:
-
 - [HyperNova: Recursive arguments for customizable constraint systems](https://eprint.iacr.org/2023/573.pdf), Abhiram Kothapalli, Srinath Setty. 2023
 - [ProtoGalaxy: Efficient ProtoStar-style folding of multiple instances](https://eprint.iacr.org/2023/1106.pdf), Liam Eagen, Ariel Gabizon. 2023
 
-### Available frontends
-Available frontends to define the folded circuit:
 
-- [arkworks](https://github.com/arkworks-rs), arkworks contributors
-- [Circom](https://github.com/iden3/circom), iden3, 0Kims Association. Experimental frontend using [arkworks/circom-compat](https://github.com/arkworks-rs/circom-compat).
+### Frontends
+
+Frontends allow to define the circuit to be folded (ie. `FCircuit`).
+The recommended frontend is directly implementing the [`FCircuit` trait](https://github.com/privacy-scaling-explorations/sonobe/blob/main/folding-schemes/src/frontend/mod.rs#L16) with the Arkworks constraint system.
+
+Alternatively, experimental frontends for [Circom](https://github.com/iden3/circom), [Noir](https://github.com/noir-lang/noir) and [Noname](https://github.com/zksecurity/noname) can be found at the [sonobe/experimental-frontends](https://github.com/privacy-scaling-explorations/sonobe/tree/main/experimental-frontends) directory, which have some computational (and time) overhead.
+
+More details about the frontend interface and the experimental frontends can be found at the [sonobe-docs/frontend](https://privacy-scaling-explorations.github.io/sonobe-docs/usage/frontend.html) page.
+
